@@ -1,0 +1,11 @@
+language: node_js
+node_js: node
+services:
+- mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: lcSFpcyjUV1oT3FxpacU1m0bOmf7DKJBntr30NpAppBLnQNi7+HiGYYHrpF6IRCkX4HBmKNe2dNcIo/3vN76Wc1LjP75m2wyw87ST/FKpjrtlF3NDMcXQ8z+1nnb/ZH1mIYhdrADK+PnkbTEjQxGoelO+u4R4Eb9lIERJ7X9BVMfD/sHtyk+0TyAFHOuFHOju8dUzeXO6rrwrmWCyvwukwI51ldFf9gptA9Qvk9xbzwDfY2CMrA7fPuzWagmiP6PjX68gbN29FHDVi73W//CGWsREQJ30Yxc+xy4WBoZotVXEyhaHpcMBa6UPSOLfliF+YoUWYWsZSl/JBkBFRWnFCD0oOD3c2J0YMjEVy/4sNzYmtSJB5IYvHAK0vKNrz/mCSFkjq48EF1cwumC5HDf/Vy7dKIq21sG4ybbFP9ZF8NvYvNOXBcFzXFV8hPsQlAnwDjqnc2BInrppMD1sOfqbgUyhJXSIhuQnNQM517eT4CD2ODoMlnCJZ76YzBsbxaW+5ndZrqG8hCoJvdK2m8CyRvVWTNm+LR1OQvGjhGKUmrE6Cs9GtMlFs+AUkQo+t/hW2d40E5RyKV5zt6X1xa+yys3+MdhDSyzf65TsRZsDrpz94cpQ1s493SjKUlFd0tkVcotBdBq7uec2QN8NycxdV75+0a96ZBHEvsC0z6h/RY=
+  app: job-seeker-journal
+  on:
+    repo: julweng/job-seeker-journal-api
