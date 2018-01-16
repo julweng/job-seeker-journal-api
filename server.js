@@ -7,6 +7,14 @@ app.get('/api/*', (req, res) => {
   res.json({ok: true});
 });
 
+const cors = require('cors');
+const {CLIENT_ORIGIN} = require('./config');
+
+app.use(
+    cors({
+        origin: CLIENT_ORIGIN
+    })
+);
 
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
