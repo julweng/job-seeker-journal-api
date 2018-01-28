@@ -4,13 +4,13 @@ global.DATABASE_URL = 'mongodb://localhost/job-seeker-journal-app';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const jwt = require('jsonwebtoken');
-
+const mongoose = require('mongoose');
 const { app, runServer, closeServer } = require('../server');
 const { Skill, Job, ReqSkill, User } = require('../users');
 const { JWT_SECRET, JWT_EXPIRY } = require('../config');
 
 const expect = chai.expect;
-
+mongoose.Promise = global.Promise;
 // This let's us make HTTP requests
 // in our tests.
 // see: https://github.com/chaijs/chai-http
@@ -19,6 +19,11 @@ chai.use(chaiHttp);
 describe('Auth endpoints', function () {
   const username = 'User';
   const password = 'Pass';
+
+  function tearDownDb() {
+    console.warn('Deleting database');
+    return mongoose.connection.dropDatabase();
+  }
 
   before(function () {
     return runServer();
@@ -38,7 +43,7 @@ describe('Auth endpoints', function () {
   });
 
   afterEach(function () {
-    return User.remove({});
+    return tearDownDb();
   });
 
   describe('/auth/login', function () {

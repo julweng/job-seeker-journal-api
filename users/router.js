@@ -111,7 +111,7 @@ router.post('/', jsonParser, (req, res) => {
     .then(hash => {
       return User.create({
         username,
-        password: hash,
+        password: hash
       });
     })
     .then(user => {
@@ -200,7 +200,7 @@ router.put('/edit/skills/:user_id/:id', (req, res) => {
   User
     .findById(req.params.user_id)
     .then(user => {
-      const skills = user.skills.id(req.params.id);
+      let skills = user.skills.id(req.params.id);
       skills.set(req.body);
       return user.save();
     })
