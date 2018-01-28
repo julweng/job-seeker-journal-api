@@ -1,5 +1,6 @@
 {
   "username": "abc",
+  "password": "123",
   "skills": [
     {
     "skill": "HTML",

@@ -1,11 +1,21 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
-const { User } = require('./model');
+const mongoose = require('mongoose');
+const { Skill, Job, ReqSkill, User  } = require('./model');
 
 const router = express.Router();
-
 const jsonParser = bodyParser.json();
+
+const ObjectId = mongoose.Schema.Types.ObjectId;
+
+function handleRequestIdError(req, res) {
+  if(!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+    const message = `Bad Request: Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
+    console.error(message);
+    return res.status(400).json({message: message});
+  }
+}
 
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
@@ -36,7 +46,7 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
 
-  // If the username and password aren't trimmed we give an error.
+  // If the username and password aren't trimmed, give error.
   const explicityTrimmedFields = ['username', 'password'];
   const nonTrimmedField = explicityTrimmedFields.find(
     field => req.body[field].trim() !== req.body[field]
@@ -52,15 +62,10 @@ router.post('/', jsonParser, (req, res) => {
   }
 
   const sizedFields = {
-    username: {
-      min: 3,
-      max: 8
-    },
-    password: {
-      min: 3,
-      max: 8
-    }
+    username: { min: 3, max: 8 },
+    password: { min: 3, max: 8 }
   };
+
   const tooSmallField = Object.keys(sizedFields).find(
     field =>
       'min' in sizedFields[field] &&
@@ -85,7 +90,7 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
 
-  let { username, password } = req.body;
+  let { username, password, jobs, skills } = req.body;
 
   //check for existing user
   return User.find({ username })
@@ -118,7 +123,8 @@ router.post('/', jsonParser, (req, res) => {
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }
-      res.status(500).json({code: 500, message: 'Internal server error'});
+      console.error(err);
+      res.status(500).json({message: 'Internal Server Error'});
     });
 });
 
@@ -129,7 +135,175 @@ router.post('/', jsonParser, (req, res) => {
 router.get('/', (req, res) => {
   return User.find()
     .then(users => res.json(users.map(user => user.apiRepr())))
-    .catch(err => res.status(500).json({message: 'Internal server error'}));
+    .catch(err => {
+    console.error(err);
+    res.status(500).json({message: 'Internal Server Error'});
+    });
 });
 
-module.exports = {router};
+// get user by user id
+router.get('/:id', (req, res) => {
+  User.findById(req.params.id)
+    .then(user => res.json(user.apiRepr()))
+    .catch(err => {
+    console.error(err);
+    res.status(500).json({message: 'Internal Server Error'});
+    });
+});
+
+// get skills by user id
+router.get('/skills/:id', (req, res) => {
+  User
+    .findById(req.params.id)
+    .sort({skills: 1})
+    .exec()
+    .then(user => res.json(user.skills))
+    .catch(err => {
+    console.error(err);
+    res.status(500).json({message: 'Internal Server Error'});
+    });
+});
+
+// post skill by user id
+router.post('/new/skills/:id', (req, res) => {
+  const requiredFields = ['user_id', 'skill', 'experience'];
+  requiredFields.forEach(field => {
+    if(!(field in req.body)) {
+      const message = `Bad request: missing \'${field}\' in request body`;
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  });
+  User
+    .findById(req.params.id)
+    .then(function(user) {
+      user.skills.push({
+        user_id: req.params.id,
+        skill: req.body.skill,
+        experience: req.body.experience
+      })
+      user
+        .save()
+        .then(user => {
+          res.status(201).json(user.apiRepr());
+        })
+        .catch(err => {
+          console.error(err);
+          res.status(500).json({message: 'Internal Server Error'});
+        })
+    });
+  });
+
+// put skill by user and skill id
+router.put('/edit/skills/:user_id/:id', (req, res) => {
+  handleRequestIdError(req, res); // check param id
+  User
+    .findById(req.params.user_id)
+    .then(user => {
+      const skills = user.skills.id(req.params.id);
+      skills.set(req.body);
+      return user.save();
+    })
+    .then(user => res.status(204).json(user.apiRepr()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal Server Error'});
+    });
+});
+
+// delete skill by user and skill id
+router.delete('/delete/skills/:user_id/:id', (req, res) => {
+  User
+    .findById(req.params.user_id)
+    .then(user => {
+      const skills = user.skills.id(req.params.id)
+      skills.remove();
+      return user.save();
+    })
+    .then(user => res.status(204).json(user.apiRepr()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal Server Error'});
+    });
+});
+
+// get job by user id
+router.get('/jobs/:id', (req, res) => {
+  User
+    .findById(req.params.id)
+    .sort({jobs: 1})
+    .exec()
+    .then(user => res.json(user.jobs))
+    .catch(err => {
+    console.error(err);
+    res.status(500).json({message: 'Internal Server Error'});
+    });
+});
+
+router.post('/new/jobs/:id', (req, res) => {
+  const requiredFields = ['user_id', 'title', 'company', 'location'];
+  requiredFields.forEach(field => {
+    if(!(field in req.body)) {
+      const message = `Bad request: missing \'${field}\' in request body`;
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  });
+  User
+    .findById(req.params.id)
+    .then(function(user) {
+      user.jobs.push({
+        user_id: req.body.user_id,
+        title: req.body.title,
+        company: req.body.company,
+        location: req.body.location,
+        required: req.body.required,
+        dateApplied: req.body.date,
+        progress: req.body.progress
+      })
+      user
+        .save()
+        .then(user => {
+          res.status(201).json(user.apiRepr());
+        })
+        .catch(err => {
+          console.error(err);
+          res.status(500).json({message: 'Internal Server Error'});
+        })
+    });
+  });
+
+// put job by user and job id
+router.put('/edit/jobs/:user_id/:id', (req, res) => {
+  handleRequestIdError(req, res); // check param id
+  User
+    .findById(req.params.user_id)
+    .then(user => {
+      const jobs = user.jobs.id(req.params.id);
+      jobs.set(req.body);
+      return user.save();
+    })
+    .then(user => res.status(204).json(user.apiRepr()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal Server Error'});
+    });
+  });
+
+// delete skill by user and skill id
+router.delete('/delete/jobs/:user_id/:id', (req, res) => {
+  User
+    .findById(req.params.user_id)
+    .then(user => {
+      const jobs = user.jobs.id(req.params.id)
+      jobs.remove();
+      return user.save();
+    })
+    .then(user => res.status(204).json(user.apiRepr()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal Server Error'});
+    });
+  });
+
+module.exports = { router };
