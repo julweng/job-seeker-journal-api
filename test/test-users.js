@@ -252,7 +252,7 @@ describe('job seeker journal api', function() {
               experience: 2
             }
             return chai.request(app)
-              .put(`/users/edit/skills/${user_id}/${id}`)
+              .put(`/users/edit/${user_id}/skills/${id}`)
               .send(update)
               .then(res => {
                 expect(res).to.have.status(204);
@@ -285,7 +285,7 @@ describe('job seeker journal api', function() {
               progress: ['resume submitted', 'phone interview']
             }
             return chai.request(app)
-              .put(`/users/edit/jobs/${user_id}/${id}`)
+              .put(`/users/edit/${user_id}/jobs/${id}`)
               .send(update)
               .then(res => {
                 expect(res).to.have.status(204);
@@ -317,7 +317,7 @@ describe('job seeker journal api', function() {
             let id = user.skills[0].id;
             console.log(user_id, id)
             return chai.request(app)
-              .delete(`/users/delete/skills/${user_id}/${id}`)
+              .delete(`/users/delete/${user_id}/skills/${id}`)
               .then(res => {
                 expect(res).to.have.status(204);
                 console.log(user)
@@ -340,7 +340,7 @@ describe('job seeker journal api', function() {
                 let id = user.jobs[0].id;
                 console.log(user_id, id)
                 return chai.request(app)
-                  .delete(`/users/delete/jobs/${user_id}/${id}`)
+                  .delete(`/users/delete/${user_id}/jobs/${id}`)
                   .then(res => {
                     expect(res).to.have.status(204);
                     console.log(user)
