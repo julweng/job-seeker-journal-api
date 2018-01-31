@@ -101,11 +101,9 @@ userSchema.statics.findOrCreate = function(user) {
     })
 }
 
-userSchema.query.byUserId = function(user_id) {
-  return this.find({skills: skills});
+userSchema.query.byUsername = function(username) {
+  return this.find({username: username});
 }
-
-
 
 const User = mongoose.model('User', userSchema);
 const ReqSkill = mongoose.model('ReqSkill', requiredSchema);

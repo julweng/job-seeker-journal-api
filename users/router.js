@@ -141,6 +141,20 @@ router.get('/', (req, res) => {
     });
 });
 
+//get user by username
+router.get('/user', (req, res) => {
+  console.log(req.query.username);
+  User
+    .find()
+    .byUsername(req.query.username)
+    .exec()
+    .then(user => res.json(user))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal Server Error'});
+    });
+});
+
 // get user by user id
 router.get('/:id', (req, res) => {
   User.findById(req.params.id)
@@ -195,7 +209,7 @@ router.post('/new/skills/:id', (req, res) => {
   });
 
 // put skill by user and skill id
-router.put('/edit/skills/:user_id/:id', (req, res) => {
+router.put('/edit/:user_id/skills/:id', (req, res) => {
   handleRequestIdError(req, res); // check param id
   User
     .findById(req.params.user_id)
@@ -212,7 +226,7 @@ router.put('/edit/skills/:user_id/:id', (req, res) => {
 });
 
 // delete skill by user and skill id
-router.delete('/delete/skills/:user_id/:id', (req, res) => {
+router.delete('/delete/:user_id/skills/:id', (req, res) => {
   User
     .findById(req.params.user_id)
     .then(user => {
@@ -274,7 +288,7 @@ router.post('/new/jobs/:id', (req, res) => {
   });
 
 // put job by user and job id
-router.put('/edit/jobs/:user_id/:id', (req, res) => {
+router.put('/edit/:user_id/jobs/:id', (req, res) => {
   handleRequestIdError(req, res); // check param id
   User
     .findById(req.params.user_id)
@@ -291,7 +305,7 @@ router.put('/edit/jobs/:user_id/:id', (req, res) => {
   });
 
 // delete skill by user and skill id
-router.delete('/delete/jobs/:user_id/:id', (req, res) => {
+router.delete('/delete/:user_id/jobs/:id', (req, res) => {
   User
     .findById(req.params.user_id)
     .then(user => {
