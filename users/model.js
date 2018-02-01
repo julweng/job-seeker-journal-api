@@ -11,11 +11,6 @@ const skillSchema = mongoose.Schema({
   experience: { type: Number, required: true }
 });
 
-// grandchild: job required skills
-const requiredSchema = mongoose.Schema({
-  skill: { type: String, required: true },
-  experience: { type: Number, required: true }
-})
 
 //parent: job
 const jobSchema = mongoose.Schema({
@@ -23,9 +18,8 @@ const jobSchema = mongoose.Schema({
   title: { type: String, required: true },
   company: { type: String, required: true },
   location: { type: String, required: true },
-  required: [requiredSchema],
   dateApplied: Date,
-  progress: [String]
+  progress: String
 })
 
 // grandparent: user auth
@@ -43,14 +37,6 @@ skillSchema.methods.apiRepr = function() {
     skill: this.skill,
     experience: this.experience,
   };
-}
-
-requiredSchema.methods.apiRepr = function() {
-  return {
-    id: this._id,
-    skill: this.skill,
-    experience: this.experience
-  }
 }
 
 jobSchema.methods.apiRepr = function() {
@@ -106,8 +92,7 @@ userSchema.query.byUsername = function(username) {
 }
 
 const User = mongoose.model('User', userSchema);
-const ReqSkill = mongoose.model('ReqSkill', requiredSchema);
 const Skill = mongoose.model('Skill', skillSchema);
 const Job = mongoose.model('Job', jobSchema);
 
-module.exports = { Skill, Job, ReqSkill, User };
+module.exports = { Skill, Job, User };

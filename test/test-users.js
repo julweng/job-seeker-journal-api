@@ -210,13 +210,10 @@ describe('job seeker journal api', function() {
               title: faker.random.words(),
               location: faker.random.words(),
               company: faker.random.words(),
-              required: [{
-                skill: faker.random.words(),
-                experience: faker.random.number()
-              }],
               dateApplied: '2018-01-28T09:23:44.877Z',
-              progress: [faker.random.word()]
+              progress: faker.random.word()
             }
+            console.log(newJob.link)
             return chai.request(app)
               .post(`/users/new/jobs/${newJob.user_id}`)
               .send(newJob)
@@ -224,12 +221,11 @@ describe('job seeker journal api', function() {
                 expect(res).to.have.status(201);
                 expect(res).to.be.json;
                 expect(res.body).to.be.an('object');
-                const { title, location, company, required, dateApplied, progress } = res.body.jobs[1];
+                const { title, location, company, dateApplied, link, progress } = res.body.jobs[1];
                 expect(title).to.equal(newJob.title);
                 expect(location).to.equal(newJob.location);
                 expect(company).to.equal(newJob.company);
-                expect(required.experience).to.equal(newJob.required.experience);
-                expect(required.skill).to.equal(newJob.required.skill);
+                expect(progress).to.equal(newJob.progress);
               });
           });
         });
@@ -278,11 +274,7 @@ describe('job seeker journal api', function() {
               company: 'foo',
               location: 'bar',
               title: 'foobar',
-              required: {
-                skill: 'biz',
-                experience: 2
-              },
-              progress: ['resume submitted', 'phone interview']
+              progress: 'resume submitted'
             }
             return chai.request(app)
               .put(`/users/edit/${user_id}/jobs/${id}`)
@@ -295,10 +287,7 @@ describe('job seeker journal api', function() {
                     expect(title).to.equal(update.title);
                     expect(location).to.equal(update.location);
                     expect(company).to.equal(update.company);
-                    expect(required[0].skill).to.equal(update.required.skill);
-                    expect(required[0].experience).to.equal(update.required.experience);
-                    expect(progress[0]).to.equal(update.progress[0]);
-                    expect(progress[1]).to.equal(update.progress[1]);
+                    expect(progress).to.equal(update.progress);
                   })
               })
           })
@@ -307,28 +296,28 @@ describe('job seeker journal api', function() {
 
     // DELETE tests
     describe('delete endpoint', function() {
-      it('delete skill by id', function() {
+      it('delete skill by skill id', function() {
         let user;
         return User
           .findOne()
           .then(_user => {
             user = _user;
-            let user_id = user.id;
+            let user_id = user._id;
             let id = user.skills[0].id;
-            console.log(user_id, id)
             return chai.request(app)
               .delete(`/users/delete/${user_id}/skills/${id}`)
               .then(res => {
                 expect(res).to.have.status(204);
-                console.log(user)
                 return User
-                  .findById(user.id)
+                  .findById(user_id)
                   .then(user => {
+                    console.log(user)
                     expect(user.skills).to.be.empty;
                   });
               });
             });
           });
+
 
           it('delete job by id', function() {
             let user;
@@ -338,12 +327,10 @@ describe('job seeker journal api', function() {
                 user = _user;
                 let user_id = user.id;
                 let id = user.jobs[0].id;
-                console.log(user_id, id)
                 return chai.request(app)
                   .delete(`/users/delete/${user_id}/jobs/${id}`)
                   .then(res => {
                     expect(res).to.have.status(204);
-                    console.log(user)
                     return User
                       .findById(user.id)
                       .then(user => {

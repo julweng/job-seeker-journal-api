@@ -2,7 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const { Skill, Job, ReqSkill, User  } = require('./model');
+const { Skill, Job, User  } = require('./model');
 
 const router = express.Router();
 const jsonParser = bodyParser.json();
@@ -230,7 +230,8 @@ router.delete('/delete/:user_id/skills/:id', (req, res) => {
   User
     .findById(req.params.user_id)
     .then(user => {
-      const skills = user.skills.id(req.params.id)
+      console.log(user)
+      let skills = user.skills.id(req.params.id);
       skills.remove();
       return user.save();
     })
@@ -304,7 +305,7 @@ router.put('/edit/:user_id/jobs/:id', (req, res) => {
     });
   });
 
-// delete skill by user and skill id
+// delete job by user and skill id
 router.delete('/delete/:user_id/jobs/:id', (req, res) => {
   User
     .findById(req.params.user_id)
