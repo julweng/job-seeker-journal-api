@@ -210,7 +210,6 @@ router.post('/new/skills/:id', (req, res) => {
 
 // put skill by user and skill id
 router.put('/edit/:user_id/skills/:id', (req, res) => {
-  handleRequestIdError(req, res); // check param id
   User
     .findById(req.params.user_id)
     .then(user => {
