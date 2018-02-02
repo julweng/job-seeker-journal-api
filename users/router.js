@@ -254,6 +254,7 @@ router.get('/jobs/:id', (req, res) => {
     });
 });
 
+// post job
 router.post('/new/jobs/:id', (req, res) => {
   const requiredFields = ['user_id', 'title', 'company', 'location'];
   requiredFields.forEach(field => {
@@ -271,8 +272,7 @@ router.post('/new/jobs/:id', (req, res) => {
         title: req.body.title,
         company: req.body.company,
         location: req.body.location,
-        required: req.body.required,
-        dateApplied: req.body.date,
+        dateApplied: req.body.dateApplied,
         progress: req.body.progress
       })
       user

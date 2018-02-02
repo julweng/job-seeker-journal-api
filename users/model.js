@@ -18,11 +18,11 @@ const jobSchema = mongoose.Schema({
   title: { type: String, required: true },
   company: { type: String, required: true },
   location: { type: String, required: true },
-  dateApplied: Date,
+  dateApplied: String,
   progress: String
 })
 
-// grandparent: user auth
+// parent: user auth
 const userSchema = mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -33,22 +33,21 @@ const userSchema = mongoose.Schema({
 skillSchema.methods.apiRepr = function() {
   return {
     id: this._id,
-    user_id: this.user_id,
-    skill: this.skill,
-    experience: this.experience,
+    user_id: this.user_id || '',
+    skill: this.skill || '',
+    experience: this.experience || '',
   };
 }
 
 jobSchema.methods.apiRepr = function() {
   return {
     id: this._id,
-    user_id: this.user_id,
-    title: this.title,
-    company: this.company,
-    location: this.location,
-    required: this.required,
-    dateApplied: Date,
-    progress: this.progress,
+    user_id: this.user_id || '',
+    title: this.title || '',
+    company: this.company || '',
+    location: this.location || '',
+    dateApplied: this.dateApplied || '',
+    progress: this.progress || '',
   }
 }
 
@@ -70,22 +69,6 @@ userSchema.methods.validatePassword = function(password) {
 userSchema.statics.hashPassword = function(password) {
   return bcrypt.hash(password, 3);
 };
-
-userSchema.statics.findOrCreate = function(user) {
-    return new Promise((resolve, reject) => {
-        this.findOne({_id: user._id}).then(result => {
-          if(!result){
-            this.create({
-              user_id: user._id,
-              required: job.required
-            }).then(result => resolve(result))
-              .catch(err => reject(err));
-          } else {
-              resolve(result);
-          }
-        }).catch(err => reject(err));
-    })
-}
 
 userSchema.query.byUsername = function(username) {
   return this.find({username: username});
