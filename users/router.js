@@ -2,7 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const { Skill, Job, ReqSkill, User  } = require('./model');
+const { Skill, Job, User  } = require('./model');
 
 const router = express.Router();
 const jsonParser = bodyParser.json();
@@ -271,8 +271,7 @@ router.post('/new/jobs/:id', (req, res) => {
         title: req.body.title,
         company: req.body.company,
         location: req.body.location,
-        required: req.body.required,
-        dateApplied: req.body.date,
+        dateApplied: req.body.dateApplied,
         progress: req.body.progress
       })
       user

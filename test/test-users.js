@@ -41,10 +41,6 @@ describe('job seeker journal api', function() {
         title: faker.random.words(),
         location: faker.random.words(),
         company: faker.random.words(),
-        required: [{
-          skill: faker.random.words(),
-          experience: faker.random.number()
-        }],
         dateApplied: faker.date.recent(),
         progress: [faker.random.word()]
       }],
@@ -165,13 +161,13 @@ describe('job seeker journal api', function() {
               expect(res).to.have.status(200);
               expect(res).to.be.json;
               expect(res.body).to.be.an('array');
-              const { user_id, id, title, company, location, required } = res.body;
+              const { user_id, id, title, company, location, progress} = res.body;
               expect(user_id).to.equal(user.jobs.user_id);
               expect(id).to.equal(user.jobs._id);
               expect(title).to.equal(user.jobs.title);
               expect(company).to.equal(user.jobs.company);
               expect(location).to.equal(user.jobs.location);
-              expect(required).to.equal(user.jobs.required);
+              expect(progress).to.equal(user.jobs.progress);
             })
         })
       })
@@ -210,12 +206,8 @@ describe('job seeker journal api', function() {
               title: faker.random.words(),
               location: faker.random.words(),
               company: faker.random.words(),
-              required: [{
-                skill: faker.random.words(),
-                experience: faker.random.number()
-              }],
               dateApplied: '2018-01-28T09:23:44.877Z',
-              progress: [faker.random.word()]
+              progress: faker.random.word()
             }
             return chai.request(app)
               .post(`/users/new/jobs/${newJob.user_id}`)
@@ -228,8 +220,6 @@ describe('job seeker journal api', function() {
                 expect(title).to.equal(newJob.title);
                 expect(location).to.equal(newJob.location);
                 expect(company).to.equal(newJob.company);
-                expect(required.experience).to.equal(newJob.required.experience);
-                expect(required.skill).to.equal(newJob.required.skill);
               });
           });
         });
@@ -278,11 +268,7 @@ describe('job seeker journal api', function() {
               company: 'foo',
               location: 'bar',
               title: 'foobar',
-              required: {
-                skill: 'biz',
-                experience: 2
-              },
-              progress: ['resume submitted', 'phone interview']
+              progress: 'resume submitted'
             }
             return chai.request(app)
               .put(`/users/edit/${user_id}/jobs/${id}`)
@@ -295,10 +281,7 @@ describe('job seeker journal api', function() {
                     expect(title).to.equal(update.title);
                     expect(location).to.equal(update.location);
                     expect(company).to.equal(update.company);
-                    expect(required[0].skill).to.equal(update.required.skill);
-                    expect(required[0].experience).to.equal(update.required.experience);
-                    expect(progress[0]).to.equal(update.progress[0]);
-                    expect(progress[1]).to.equal(update.progress[1]);
+                    expect(progress).to.equal(update.progress);
                   })
               })
           })
