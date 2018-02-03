@@ -4,15 +4,14 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-// parent: user skills
+// user skills
 const skillSchema = mongoose.Schema({
   user_id: { type: String, required: true },
   skill: {type: String, required: true },
   experience: { type: Number, required: true }
 });
 
-
-//parent: job
+// job
 const jobSchema = mongoose.Schema({
   user_id: {type: String, required: true},
   title: { type: String, required: true },
@@ -42,12 +41,12 @@ skillSchema.methods.apiRepr = function() {
 jobSchema.methods.apiRepr = function() {
   return {
     id: this._id,
-    user_id: this.user_id || '',
-    title: this.title || '',
-    company: this.company || '',
-    location: this.location || '',
-    dateApplied: this.dateApplied || '',
-    progress: this.progress || '',
+    user_id: this.user_id,
+    title: this.title,
+    company: this.company,
+    location: this.location,
+    dateApplied: this.dateApplied,
+    progress: this.progress,
   }
 }
 

@@ -41,10 +41,6 @@ describe('job seeker journal api', function() {
         title: faker.random.words(),
         location: faker.random.words(),
         company: faker.random.words(),
-        required: [{
-          skill: faker.random.words(),
-          experience: faker.random.number()
-        }],
         dateApplied: faker.date.recent(),
         progress: [faker.random.word()]
       }],
@@ -165,13 +161,13 @@ describe('job seeker journal api', function() {
               expect(res).to.have.status(200);
               expect(res).to.be.json;
               expect(res.body).to.be.an('array');
-              const { user_id, id, title, company, location, required } = res.body;
+              const { user_id, id, title, company, location, progress} = res.body;
               expect(user_id).to.equal(user.jobs.user_id);
               expect(id).to.equal(user.jobs._id);
               expect(title).to.equal(user.jobs.title);
               expect(company).to.equal(user.jobs.company);
               expect(location).to.equal(user.jobs.location);
-              expect(required).to.equal(user.jobs.required);
+              expect(progress).to.equal(user.jobs.progress);
             })
         })
       })
