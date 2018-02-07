@@ -209,7 +209,6 @@ describe('job seeker journal api', function() {
               dateApplied: '2018-01-28T09:23:44.877Z',
               progress: faker.random.word()
             }
-            console.log(newJob.link)
             return chai.request(app)
               .post(`/users/new/jobs/${newJob.user_id}`)
               .send(newJob)
@@ -307,7 +306,6 @@ describe('job seeker journal api', function() {
                 return User
                   .findById(user_id)
                   .then(user => {
-                    console.log(user)
                     expect(user.skills).to.be.empty;
                   });
               });

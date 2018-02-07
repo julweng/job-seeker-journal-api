@@ -13,7 +13,6 @@ const { router: usersRouter } = require('./users');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 const ObjectId = mongoose.Schema.Types.ObjectId;
 const { PORT, DATABASE_URL } = require('./config');
-//const { JobAndSkill, Skill, Job, Required } = require('./models');
 
 const app = express();
 app.use(bodyParser.json());

@@ -143,9 +143,7 @@ router.get('/', (req, res) => {
 
 //get user by username
 router.get('/user', (req, res) => {
-  console.log(req.query.username);
-  User
-    .find()
+  User.find()
     .byUsername(req.query.username)
     .exec()
     .then(user => res.json(user))
