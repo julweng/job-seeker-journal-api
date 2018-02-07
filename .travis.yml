@@ -9,3 +9,5 @@ deploy:
   app: job-seeker-journal
   on:
     repo: julweng/job-seeker-journal-api
+  env:
+    - JWT_SECRET='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ';
